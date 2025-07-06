@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Admin\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Auth\AdminProfileUpdateRequest;
+use App\Http\Requests\Admin\AdminProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         return view('admin.profile.edit', [
-            'user' => $request->user(),
+            'user' => Auth::guard('admin')->user(),
         ]);
     }
 
@@ -27,16 +27,19 @@ class ProfileController extends Controller
      */
     public function update(AdminProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $admin = $request->user('admin');
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $admin->fill($request->validated());
+
+        if ($admin->isDirty('email')) {
+            $admin->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $admin->save();
 
         return Redirect::route('admin.profile.edit')->with('status', 'profile-updated');
     }
+
 
     /**
      * Delete the admin's account.
@@ -47,7 +50,7 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password:admin'],
         ]);
 
-        $admin = $request->user();
+        $admin = $request->user('admin');
 
         Auth::guard('admin')->logout();
 
