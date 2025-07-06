@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use App\Http\Requests\Auth\Admin\AdminRegisterRequest;
+use App\Http\Requests\Admin\Auth\AdminRegisterRequest;
 
 class RegisteredUserController extends Controller
 {
